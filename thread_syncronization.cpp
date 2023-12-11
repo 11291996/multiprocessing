@@ -321,3 +321,5 @@ void updateSharedData() {
   lock_guard<shared_mutex> lk(entry_mutex); //only single thread can write though
   //some writing by a thread locked
 } //still faster than single read and single write
+
+//alignas for false sharing
