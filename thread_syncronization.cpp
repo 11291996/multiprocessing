@@ -323,3 +323,29 @@ void updateSharedData() {
 } //still faster than single read and single write
 
 //alignas for false sharing
+#include <iostream>
+#include <thread>
+
+alignas(64) long long num1 = 0; //padding applied via alignas library
+alignas(64) long long num2 = 0;
+
+//counting functions
+void fun1() {
+    for (long long i = 0; i < 1000000000; i++)
+        num1 += 1;
+}
+
+void fun2() {
+    for (long long i = 0; i < 1000000000; i++)
+        num2 += 1;
+}
+
+int main() {
+
+    std::thread t1(fun1); //using two threads
+    std::thread t2(fun2);   
+
+    t1.join(); t2.join();
+} //compile with g++ -std=c++11 -lpthread -o test test.cpp
+//test with time ./test using alignas and not from above 
+//m1 chip does not show much difference but intel chips do

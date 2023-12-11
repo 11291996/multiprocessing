@@ -2,8 +2,8 @@
 #include <thread>
 #include <chrono>
 
-alignas(64) long long num1 = 0; //바뀐 부분
-alignas(64) long long num2 = 0; //바뀐 부분
+long long num1 = 0; //바뀐 부분
+long long num2 = 0; //바뀐 부분
 long long num3 = 0;
 
 void fun1() {
