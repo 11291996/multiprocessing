@@ -1,46 +1,31 @@
 #include <iostream>
 #include <thread>
-#include <chrono>
+#include <mutex>
+#include <queue>
 
-long long num1 = 0; //바뀐 부분
-long long num2 = 0; //바뀐 부분
-long long num3 = 0;
+using namespace std;
 
-void fun1() {
-    for (long long i = 0; i < 1000000000; i++)
-        num1 += 1;
-}
+template<typename T>
 
-void fun2() {
-    for (long long i = 0; i < 1000000000; i++)
-        num2 += 1;
-}
+class threadsafe_queue {
+    private:
+        mutex mut;
+        queue<T> data_queue;
+        condition_variable data_cond;
+    public:
+        void push(T new_value) {
+        lock_guard<mutex> lk(mut);
+        data_queue.push(new_value);
+        data_cond.notify_all();
+        }
+        void wait_and_pop(T& value) {
+            unique_lock<mutex> lk(mut);
+            data_cond.wait(lk,[this]{return !data_queue.empty();});
+            value=data_queue.front();
+            data_queue.pop();
+        }
+};
 
-void fun3() {
-    for (long long i = 0; i < 2000000000; i++) {
-        num3 += 1;
-    }
-}
 int main() {
-    auto beginTime = std::chrono::high_resolution_clock::now();
-
-    std::thread t1(fun1);   //Multi Thread 실행
-    std::thread t2(fun2);   //Multi Thread 실행
-
-    t1.join(); t2.join();
-
-    auto endTime = std::chrono::high_resolution_clock::now(); 
-    std::chrono::duration<double> resultTime = endTime - beginTime;
-
-    printf("%lld\n", num1 + num2);
-    std::cout << resultTime.count() << std::endl;
-    printf("--------------------\n");
-    beginTime = std::chrono::high_resolution_clock::now();
-
-    fun3(); //Single Thread 실행
-    
-    endTime = std::chrono::high_resolution_clock::now();
-    resultTime = endTime - beginTime;
-    printf("%lld\n", num3);
-    std::cout << resultTime.count() << std::endl;
+    return 0;
 }

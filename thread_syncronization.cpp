@@ -31,7 +31,6 @@ int main() {
 //to solve this 
 //use atomic libary
 #include <atomic>
-#include <thread>
 #include <vector>
 
 atomic<long> counter(0); //template is below
@@ -323,7 +322,6 @@ void updateSharedData() {
 } //still faster than single read and single write
 
 //alignas for false sharing
-#include <iostream>
 #include <thread>
 
 alignas(64) long long num1 = 0; //padding applied via alignas library
@@ -342,10 +340,32 @@ void fun2() {
 
 int main() {
 
-    std::thread t1(fun1); //using two threads
-    std::thread t2(fun2);   
+    thread t1(fun1); //using two threads
+    thread t2(fun2);   
 
     t1.join(); t2.join();
 } //compile with g++ -std=c++11 -lpthread -o test test.cpp
 //test with time ./test using alignas and not from above 
 //m1 chip does not show much difference but intel chips do
+
+//Example of Ada Object in c++
+#include <queue>
+template<typename T>
+class threadsafe_queue {
+    private:
+        mutex mut;
+        queue<T> data_queue;
+        condition_variable data_cond;
+    public:
+        void push(T new_value) {
+        lock_guard<mutex> lk(mut);
+        data_queue.push(new_value);
+        data_cond.notify_all();
+        }
+        void wait_and_pop(T& value) {
+            unique_lock<mutex> lk(mut);
+            data_cond.wait(lk,[this]{return !data_queue.empty();});
+            value=data_queue.front();
+            data_queue.pop();
+        }
+};
