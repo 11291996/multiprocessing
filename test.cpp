@@ -1,31 +1,29 @@
 #include <iostream>
-#include <thread>
 #include <mutex>
-#include <queue>
+#include <vector>
 
 using namespace std;
 
-template<typename T>
+const auto workers = {"Peter", "Clara", "Carl"};
 
-class threadsafe_queue {
-    private:
-        mutex mut;
-        queue<T> data_queue;
-        condition_variable data_cond;
-    public:
-        void push(T new_value) {
-        lock_guard<mutex> lk(mut);
-        data_queue.push(new_value);
-        data_cond.notify_all();
-        }
-        void wait_and_pop(T& value) {
-            unique_lock<mutex> lk(mut);
-            data_cond.wait(lk,[this]{return !data_queue.empty();});
-            value=data_queue.front();
-            data_queue.pop();
-        }
+auto on_completion = []() noexcept {
+    cout << "phase done\n"; // locking not needed here
+};
+
+barrier sync_point(ssize(workers), on_completion);
+
+auto work = [&](string name) {
+    string product = " " + name + " worked\n";
+    osyncstream(cout) << product; // atomic
+    sync_point.arrive_and_wait();
+    product = " " + name + " cleaned\n";
+    osyncstream(cout) << product;
+    sync_point.arrive_and_wait();
 };
 
 int main() {
-    return 0;
+    vector<jthread> threads;
+    threads.reserve(size(workers));
+    for (auto const& worker : workers)
+        threads.emplace_back(work, worker);
 }

@@ -68,7 +68,7 @@ return 0;}
 //this may result Helllo ffrom outhre,,, //mixed output
 //to deal with this one can use osyncstream
 #include <ostream> //this library is not in standard library now
-//use mutex to control cout
+//uses mutex to control cout
 void* threadF (void *arg) {
     osyncstream(cout) << "Hello from our first POSIX thread.\n";
     return nullptr;
