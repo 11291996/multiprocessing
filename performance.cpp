@@ -1,6 +1,6 @@
 #include<papi.h> //papi is not a standard library //should be installed online
 
-long long int end = 100000000
+long long int end = 100000000;
 
 int main() {
     int retval = PAPI_library_init(PAPI_VER_CURRENT);
