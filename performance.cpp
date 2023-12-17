@@ -8,7 +8,7 @@ int main() {
         fail( __FILE__, __LINE__, "PAPI_library_init", retval );
     long long cyc_startcalc = PAPI_get_real_cyc(); //starts hardward cycle
     long long usec_startcalc = PAPI_get_real_usec(); //starts human clock
-    for (i = 0; i < end; i ++) {} //code being checked  
+    for (int i = 0; i < end; i ++) {}; //code being checked  
     long long cyc_finish = PAPI_get_real_cyc(); //ends hardward cycle
     long long usec_finish = PAPI_get_real_usec(); //starts huamn clock
     printf("Duration (cycles): %s\n", cyc_finish - cyc_startcalc);
