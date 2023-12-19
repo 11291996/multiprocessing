@@ -71,7 +71,7 @@ int main() {
   a.exchange(3); //store the data and return the old value
   float b = 2;
   float c = 3;
-  a.compare_exchange_weak(b, c)//if b != a, then b = a and return True, else a = c, False
+  a.compare_exchange_weak(b, c)//if b != a, then b = a and return false, else a = c, true
   a.compare_exchange_strong(b, c)//same but retry if fail //one can use weak and while loop to do the same
   a.fetch_add(2); //a = a + 2 atomically //return the old value
   a.fetch_sub(2); //a = a - 2 atomically //return the old value
