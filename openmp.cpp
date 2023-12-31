@@ -106,3 +106,32 @@ int main() {
 }
 
 //parallel sections //barrier
+int main() {
+    omp_set_num_threads(3);
+    #pragma omp parallel sections
+    {
+        #pragma omp section 
+        {
+        printf( "Section 1 executed by thread %d\n", omp_get_thread_num() );
+        }
+        #pragma omp section 
+        {
+        printf( "Section 2 executed by thread %d\n", omp_get_thread_num() );
+        }
+        #pragma omp section 
+        {
+        printf( "Section 3 executed by thread %d\n", omp_get_thread_num() );
+        }
+    }
+}
+
+//outsourcing 
+
+int main()
+{ 
+  int x = 1;
+  #pragma omp target map(tofrom: x) //sends x to the device and back
+  x = x + 1; // The copy of x on the device has a value of 2.
+  printf("After the target region is executed, x = %d\n", x);
+  return 0;
+}
