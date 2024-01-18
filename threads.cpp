@@ -294,14 +294,14 @@ bool is_prime (int x) {
 for (int i=2; i<x; ++i) if (x%i==0) return false; return true;
 }
 int main (void) {
-  //call function asynchronously
-future<bool> ft = async (is_prime, 444444443); //meaning this function will be executed in another thread
-  //do something while waiting for function to set future:
-  cout << "checking, please wait" << endl;
-  //blocks the main flow until return value is available
-  //since ft is a future object
-  bool x = ft.get(); 
-  cout << "444444443 "
+    //call function asynchronously
+    future<bool> ft = async (is_prime, 444444443); //meaning this function will be executed in another thread without the order is defined
+    //do something while waiting for function to set future:
+    cout << "checking, please wait" << endl;
+    //blocks the main flow until return value is available
+    //since ft is a future object
+    bool x = ft.get(); 
+    cout << "444444443 "
             << (x?"is":"is not") << " prime.\n";
 return 0; }
 //strtok is not thread safe //string to token
